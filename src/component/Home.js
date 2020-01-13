@@ -10,22 +10,23 @@ const Alldata = [
       key: 'john',
       value: 'John Doe',
       Name:'John Doe',
-      Number:'+91343433434',
-      Address : "First Bom,USE"
-    },
-    {
-      key: 'jane',
-      id:'2',
-      value: 'Jane Doe',
+      first_name:'John',
+      last_name:'Doe',
+      email:null,
+      phone_number: "9404480524",
+      country_id: 226,
       Address : "First Bom,USE",
-      Name:'John Doe',
-      Number:'+91343433434'
+     
     },
     { id:'3',
       key: 'mary',
       value: 'Mary Phillips',
       Name:'Mary Phillips',
-      Number:'+91343433434',
+      first_name:'Mary',
+      last_name:'Phillips',
+      email:null,
+      phone_number: "9404480524",
+      country_id: 226,
       Address : "First Bom,USE"
 
     },
@@ -34,7 +35,11 @@ const Alldata = [
       key: 'robert',
       value: 'Robert',
       Name:'Robert',
-      Number:'+91343433434',
+      first_name:'Robert',
+      last_name:'Phillips',
+      email:null,
+      phone_number: "9404480524",
+      country_id: 226,
       Address : "First Bom,USE"
 
     },
@@ -43,18 +48,40 @@ const Alldata = [
       key: 'karius',
       value: 'Karius',
       Name:'Karius',
-      Number:'+91343433434',
+      first_name:'Karius',
+      last_name:'Deo',
+      email:null,
+      phone_number: "9404480524",
+      country_id: 230,
       Address : "First Bom,USE"
       
     },
-    {    
+    {
         id:'6',
-        key: 'jane',
-        value: 'Jane Doe',
-        Address : "First Bom,USE",
-        Name:'John Doe',
-        Number:'+91343433434'
-      },
+      key: 'karius',
+      value: 'Karius',
+      Name:'Karius',
+      first_name:'Karius',
+      last_name:'Deo',
+      email:null,
+      phone_number: "9404480524",
+      country_id: 230,
+      Address : "First Bom,USE"
+      
+    },
+    {
+        id:'7',
+      key: 'robert',
+      value: 'Robert',
+      Name:'Robert',
+      first_name:'Robert',
+      last_name:'Phillips',
+      email:null,
+      phone_number: "9404480524",
+      country_id: 226,
+      Address : "First Bom,USE"
+
+    },
 
   ]
   const style = {
@@ -80,19 +107,34 @@ class Home extends Component{
     
   }
   componentDidMount() {
-    const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNzEiLCJleHAiOjE2MDM3ODM0Mzd9.3ievseHtX0t3roGh7nBuNsiaQeSjfiHWyyx_5GlOLXk'
-      }
-    axios.get(`https://api.dev.pastorsline.com/api/contacts.json`,{
-        headers:headers
-    })
-      .then(res => {
-          console.log(res);
+    // const headers = {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNzEiLCJleHAiOjE2MDM3ODM0Mzd9.3ievseHtX0t3roGh7nBuNsiaQeSjfiHWyyx_5GlOLXk'
+    //   }
+    // axios.get(`https://api.dev.pastorsline.com/api/contacts.json`,{
+    //     headers:headers
+    // })
+    //   .then(res => {
+    //       console.log(res);
           
-        // const persons = res.data;
-        // this.setState({ persons });
-      })
+    //   })
+    let params = {
+        companyId: 171,
+        query: 'A',
+        page: 1,
+        countryId: 226
+      }
+
+
+      const URL ='https://api.dev.pastorsline.com/api/contacts.json';
+      const AuthStr = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNzEiLCJleHAiOjE2MDM3ODM0Mzd9.3ievseHtX0t3roGh7nBuNsiaQeSjfiHWyyx_5GlOLXk'; 
+        axios.post(URL,params, { headers: { Authorization: AuthStr } })
+        .then(response => {
+            console.log(response.data);
+        })
+        .catch((error) => {
+            console.log('error ' + error);
+        });
   }
   
   setModalA(){
@@ -142,6 +184,7 @@ class Home extends Component{
     })
     
   };
+
   closeModalC(){
     this.setState({
         modalC:!this.state.modalC,
@@ -151,6 +194,7 @@ class Home extends Component{
     this.props.history.push('/')
     
   };
+
   fetchMoreData = () => {
     // a fake async api call like which sends
     // 20 more records in 1.5 secs
@@ -160,6 +204,7 @@ class Home extends Component{
       });
     }, 1500);
   };
+
   onlyOddForAllContant=() =>{
     var checkBox = document.getElementById("myCheck");
         
@@ -255,7 +300,7 @@ class Home extends Component{
                 <div  className="scroll">
                     {this.state.data.map((item,index)=>(
                         <div onClick={()=>this.setModalC(item)} className="contactDiv">
-                            <h4>{item.Name}</h4>
+                            <h4>{item.first_name} {item.last_name}</h4>
                             <p>{item.Name}</p>
                         </div>
                     )
@@ -296,7 +341,7 @@ class Home extends Component{
                 <div className="scroll">
                     {this.state.data.map((item,index)=>(
                         <div onClick={()=>this.setModalC(item)} className="contactDiv">
-                            <h4>{item.Name}</h4>
+                            <h4>{item.first_name} {item.last_name}</h4>
                             <p>{item.Name}</p>
                         </div>
                     )
@@ -326,8 +371,8 @@ class Home extends Component{
             </ModalHeader>
             <ModalBody>
                 <div className="contactDiv">
-                    <h3>{selectedValueDetail.Name}</h3>
-                    <h6>mobile Number : {selectedValueDetail.Number}</h6>
+                    <h3>{selectedValueDetail.first_name} {selectedValueDetail.last_name}</h3>
+                    <h6>mobile Number : {selectedValueDetail.phone_number}</h6>
                     <p>Address : {selectedValueDetail.Address}</p>
                 </div>
                
