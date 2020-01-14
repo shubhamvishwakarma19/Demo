@@ -22,4 +22,11 @@
     height: 200px;
     overflow: auto;
   }
+  .searchInput{
+    width: 100% !important;
+    padding: 5px !important;
+  }
+  .padd10{
+    padding:10px !important;
+  }
   

@@ -1,95 +1,18 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter  } from 'reactstrap';
-import ReactSearchBox from 'react-search-box';
 import './Home.css';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
-const Alldata = [
-    {
-      id:'1',
-      key: 'john',
-      value: 'John Doe',
-      Name:'John Doe',
-      first_name:'John',
-      last_name:'Doe',
-      email:null,
-      phone_number: "9404480524",
-      country_id: 226,
-      Address : "First Bom,USE",
-     
-    },
-    { id:'3',
-      key: 'mary',
-      value: 'Mary Phillips',
-      Name:'Mary Phillips',
-      first_name:'Mary',
-      last_name:'Phillips',
-      email:null,
-      phone_number: "9404480524",
-      country_id: 226,
-      Address : "First Bom,USE"
+import {ContactAll , contactUSAll} from '../action/action';
 
-    },
-    {
-        id:'4',
-      key: 'robert',
-      value: 'Robert',
-      Name:'Robert',
-      first_name:'Robert',
-      last_name:'Phillips',
-      email:null,
-      phone_number: "9404480524",
-      country_id: 226,
-      Address : "First Bom,USE"
 
-    },
-    {
-        id:'5',
-      key: 'karius',
-      value: 'Karius',
-      Name:'Karius',
-      first_name:'Karius',
-      last_name:'Deo',
-      email:null,
-      phone_number: "9404480524",
-      country_id: 230,
-      Address : "First Bom,USE"
-      
-    },
-    {
-        id:'6',
-      key: 'karius',
-      value: 'Karius',
-      Name:'Karius',
-      first_name:'Karius',
-      last_name:'Deo',
-      email:null,
-      phone_number: "9404480524",
-      country_id: 230,
-      Address : "First Bom,USE"
-      
-    },
-    {
-        id:'7',
-      key: 'robert',
-      value: 'Robert',
-      Name:'Robert',
-      first_name:'Robert',
-      last_name:'Phillips',
-      email:null,
-      phone_number: "9404480524",
-      country_id: 226,
-      Address : "First Bom,USE"
-
-    },
-
-  ]
-  const style = {
-    height: 30,
-    border: "1px solid green",
-    margin: 6,
-    padding: 8
-  };
+const style = {
+  height: 30,
+  border: "1px solid green",
+  margin: 6,
+  padding: 8
+};
 
 class Home extends Component{
   constructor(props){
@@ -99,56 +22,98 @@ class Home extends Component{
       modalB:false,
       modalC:false,
       selectedValueDetail:[],
-      items: Array.from({ length: 20 }),
-      data:Alldata
+      allContactData:[],
+      USContactData:[],
+      inputSearchforAll:'',
+      inputSearchforUS:'',
+      currentPageAll:1,
+      currentPageUs:1,
+      searchTextValueAll:'',
+      searchTextValueUS:'',
+      loadingForAll:false,
+      loadingForUS:false
+
 
     }
+    this.searchForAllContact= this.searchForAllContact.bind(this);
 
     
   }
   componentDidMount() {
-    // const headers = {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNzEiLCJleHAiOjE2MDM3ODM0Mzd9.3ievseHtX0t3roGh7nBuNsiaQeSjfiHWyyx_5GlOLXk'
-    //   }
-    // axios.get(`https://api.dev.pastorsline.com/api/contacts.json`,{
-    //     headers:headers
-    // })
-    //   .then(res => {
-    //       console.log(res);
-          
-    //   })
-    let params = {
-        companyId: 171,
-        query: 'A',
-        page: 1,
-        countryId: 226
+    // let searchValue = "";
+    // this.props.ContactAll(searchValue,this.state.currentPageAll);
+    // this.props.contactUSAll(searchValue,this.state.currentPageUs);
+  }
+
+  componentWillReceiveProps(nextProps){
+    if(nextProps){
+
+      if(nextProps.AllContactValue.AllContactFromAPI){
+        let map = nextProps.AllContactValue.AllContactFromAPI;
+        const result = Object.keys(map).map((key) => map[key]);
+       
+        if(this.state.loadingForAll){
+          let oldValue = this.state.allContactData;
+          for(let item of result){
+            oldValue.push(item)
+          }
+          this.setState({
+            allContactData : oldValue
+          })
+        }else{
+          this.setState({
+            allContactData : result
+          })
+        }
       }
 
-
-      const URL ='https://api.dev.pastorsline.com/api/contacts.json';
-      const AuthStr = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNzEiLCJleHAiOjE2MDM3ODM0Mzd9.3ievseHtX0t3roGh7nBuNsiaQeSjfiHWyyx_5GlOLXk'; 
-        axios.post(URL,params, { headers: { Authorization: AuthStr } })
-        .then(response => {
-            console.log(response.data);
-        })
-        .catch((error) => {
-            console.log('error ' + error);
-        });
+      if(nextProps.AllContactValue.USAllContactFromAPI){
+        let map = nextProps.AllContactValue.USAllContactFromAPI;
+        const result = Object.keys(map).map((key) => map[key]);
+        if(this.state.loadingForUS){
+          let oldValue = this.state.USContactData;
+          for(let item of result){
+            oldValue.push(item)
+          }
+          this.setState({
+            USContactData : oldValue
+          })
+        }else{
+          this.setState({
+            USContactData : result
+          })
+        }
+      }
+      
+    }
   }
   
   setModalA(){
     this.setState({
       modalA:!this.state.modalA,
-      modalB:false
+      modalB:false,
+      loadingForAll:false
     })
+    let searchValue = "";
+    let page = 1;
+    this.props.ContactAll(searchValue,page);
+    
     this.props.history.push('/allContact')
+   
   };
 
   closeModalA(){
+
     this.setState({
       modalA:!this.state.modalA,
-      modalB:false
+      modalB:false,
+      loadingForAll:false,
+      loadingForUS:false,
+      allContactData:[],
+      searchTextValueAll:'',
+
+
+    },()=>{console.log(this.state.allContactData);
     })
     this.props.history.push('/')
   };
@@ -156,28 +121,43 @@ class Home extends Component{
   setModalB(){
     this.setState({
       modalB:!this.state.modalB,
-      modalA:false
-
+      modalA:false,
+      loadingForAll:false,
+      loadingForUS:false,
+      
     })
+    let searchValue = "";
+    let page = 1;
+    this.props.contactUSAll(searchValue,page);
     this.props.history.push('/USContact')
 
   };
 
   closeModalB(){
     this.setState({
-        modalB:!this.state.modalB,
-        modalA:false
+      modalB:!this.state.modalB,
+      modalA:false,
+      loadingForAll:false,
+      loadingForUS:false,
+      USContactData:[],
+      searchTextValueUS:''
+
+
   
-      })
-      this.props.history.push('/')
+    })
+    this.props.history.push('/')
   
   };
 
   setModalC(item){
+    
     this.setState({
         modalC:!this.state.modalC,
         modalA:false,
         modalB:false,
+        loadingForAll:false,
+        loadingForUS:false,
+        
         selectedValueDetail: item
 
 
@@ -190,38 +170,52 @@ class Home extends Component{
         modalC:!this.state.modalC,
         modalA:false,
         modalB:false,
+        loadingForAll:false,
+        loadingForUS:false,
+        allContactData:[],
+        USContactData:[],
+
+
     })
     this.props.history.push('/')
     
   };
 
-  fetchMoreData = () => {
-    // a fake async api call like which sends
-    // 20 more records in 1.5 secs
-    setTimeout(() => {
-      this.setState({
-        items: this.state.items.concat(Array.from({ length: 20 }))
-      });
-    }, 1500);
+  fetchMoreDataAll = () => {
+    this.setState({
+      loadingForAll:true,
+      currentPageAll: this.state.currentPageAll+1
+    })
+    this.props.ContactAll(this.state.searchTextValueAll,this.state.currentPageAll+1)
+  };
+
+  fetchMoreDataUS = () => {
+    this.setState({
+      loadingForUS:true,
+      currentPageUs:this.state.currentPageUs+1
+    })
+    this.props.contactUSAll(this.state.searchTextValueAll,this.state.currentPageAll+1)
   };
 
   onlyOddForAllContant=() =>{
     var checkBox = document.getElementById("myCheck");
-        
+        let AllData = this.state.allContactData;
         if (checkBox.checked === true){
             let oddData = [];
-            for(let item of Alldata){
-                if(item.id % 2){
+            for(let item of AllData){
+                if(item.id % 2 === 0){
                     oddData.push(item)
                 }
             }
-            console.log(oddData);
             this.setState({
-                data:oddData
+              allContactData:oddData
             })
           } else {
+
+            let map = this.props.AllContactValue.AllContactFromAPI;
+            const result = Object.keys(map).map((key) => map[key]);
             this.setState({
-                data:Alldata
+              allContactData : result
             })
           }
         
@@ -229,31 +223,60 @@ class Home extends Component{
 
   onlyOddForUSContant=() =>{
     var checkBox2 = document.getElementById("myCheck2");
+    let AllData = this.state.USContactData;
         
         if (checkBox2.checked === true){
             let oddData = [];
-            for(let item of Alldata){
-                if(item.id % 2){
+            for(let item of AllData){
+                if(item.id % 2 === 0){
                     oddData.push(item)
                 }
             }
-            console.log(oddData);
             this.setState({
-                data:oddData
+              USContactData:oddData
             })
           } else {
+            let map = this.props.AllContactValue.AllContactFromAPI;
+            const result = Object.keys(map).map((key) => map[key]);
             this.setState({
-                data:Alldata
+              USContactData : result
             })
           }
         
+  }
+
+  searchForAllContact=(value)=>{
+    this.setState({
+      searchTextValueAll: value,
+      currentPageAll:1
+    },()=>{
+      this.timer = setTimeout(() => {
+        this.props.ContactAll(this.state.searchTextValueAll,this.state.currentPageAll)
+         
+        }, 1000);
+    })
+    
+
+  }
+  searchForUSContact=(value)=>{
+    this.setState({
+      searchTextValueUS: value,
+      currentPageUs:1
+    },()=>{
+      this.timer = setTimeout(() => {
+        this.props.contactUSAll(this.state.searchTextValueUS,this.state.currentPageUs)
+         
+        }, 1000);
+    })
+
   }
   
  
   
   
   render(){
-      let { selectedValueDetail } = this.state;
+    console.log(this.state)
+      let { selectedValueDetail , inputSearchforAll} = this.state;
     return (
       <div className="App">
         <header className="App-header" style={{minHeight: 20}}>
@@ -261,25 +284,8 @@ class Home extends Component{
         </header>
         <div style={{width:'100%'}}>
 
-            <Button className="modalAButtonColor" style={{margin:10}} onClick={()=>this.setModalA()}>All Contacts</Button>
-            <Button className="modalBButtonColor" style={{margin:10}} onClick={()=>this.setModalB()} >US Contacts</Button>
-
-            <div>
-                <h1>demo: react-infinite-scroll-component</h1>
-                <hr />
-                <InfiniteScroll
-                    dataLength={this.state.items.length}
-                    next={this.fetchMoreData}
-                    hasMore={true}
-                    loader={<h4>Loading...</h4>}
-                    >
-                    {this.state.items.map((i, index) => (
-                        <div style={style} key={index}>
-                        div - #{index}
-                        </div>
-                    ))}
-                </InfiniteScroll>
-            </div>
+          <Button className="modalAButtonColor" style={{margin:10}} onClick={()=>this.setModalA()}>All Contacts</Button>
+          <Button className="modalBButtonColor" style={{margin:10}} onClick={()=>this.setModalB()} >US Contacts</Button>
         </div>
         {/* =============modal A=============== */}
         <Modal isOpen={this.state.modalA} centered={true} >
@@ -287,24 +293,30 @@ class Home extends Component{
                 All Contacts   
             </ModalHeader>
             <ModalBody>
-               
-                <div>
-                    <ReactSearchBox
-                        placeholder="Placeholder"
-                        value=""
-                        data={this.state.data}
-                        callback={record => console.log(record)}
-                        onSelect={record =>this.setModalC(record)}
-                    />
+                <div className="padd10">
+                  <input className="searchInput" type="text" value={this.state.searchTextValueAll} placeholder="Search" onChange={e=>this.searchForAllContact(e.target.value)}  onKeyPress={event => {
+                if (event.key === 'Enter') {
+                  this.props.ContactAll(event.target.value,this.state.currentPageUs);
+                }
+              }}/>
                 </div>
-                <div  className="scroll">
-                    {this.state.data.map((item,index)=>(
-                        <div onClick={()=>this.setModalC(item)} className="contactDiv">
+                <div>
+                  <InfiniteScroll
+                    height={200}
+                    dataLength={this.state.allContactData.length}
+                    next={this.fetchMoreDataAll}
+                    hasMore={true}
+                    loader={<h4>Loading...</h4>}
+                    >
+                    {this.state.allContactData && this.state.allContactData.length > 0 && this.state.allContactData.map((item,index)=>(
+                        <div key={index} onClick={()=>this.setModalC(item)} className="contactDiv">
+                            
                             <h4>{item.first_name} {item.last_name}</h4>
-                            <p>{item.Name}</p>
+                            <p>{item.id}</p>
                         </div>
                     )
                     )}
+                    </InfiniteScroll>
                     
                 </div>
               
@@ -328,27 +340,33 @@ class Home extends Component{
             <ModalHeader >
                 US Contacts   
             </ModalHeader>
-            <ModalBody>
-                <div>
-                    <ReactSearchBox
-                        placeholder="Placeholder"
-                        value=""
-                        data={this.state.data}
-                        callback={record => console.log(record)}
-                        onSelect={record =>this.setModalC(record)}
-                    />
+            <ModalBody>ContactAll
+                <div className="padd10">
+                  <input className="searchInput" type="text" placeholder="Search" onChange={e=>this.searchForUSContact(e.target.value)} onKeyPress={event => {
+                if (event.key === 'Enter') {
+                  this.props.contactUSAll(event.target.value,this.state.currentPageUs);
+                }
+              }}/>
                 </div>
-                <div className="scroll">
-                    {this.state.data.map((item,index)=>(
-                        <div onClick={()=>this.setModalC(item)} className="contactDiv">
-                            <h4>{item.first_name} {item.last_name}</h4>
-                            <p>{item.Name}</p>
+                <div>
+                  <InfiniteScroll
+                    height={200}
+                    dataLength={this.state.USContactData.length}
+                    next={this.fetchMoreDataUS}
+                    hasMore={true}
+                    loader={<h4>Loading...</h4>}
+                    >
+                   {this.state.USContactData &&  this.state.USContactData.length > 0 && this.state.USContactData.map((item,index)=>(
+                        <div  key={index} onClick={()=>this.setModalC(item)} className="contactDiv">
+                           <h4>{item.first_name} {item.last_name}</h4>
+                            <p>{item.id}</p>
+                            
                         </div>
                     )
                     )}
+                    </InfiniteScroll>
                     
                 </div>
-               
             </ModalBody>
             <ModalFooter>
               <div style={{width:'100%',display:'inline-flex'}}>
@@ -367,13 +385,13 @@ class Home extends Component{
 
         <Modal isOpen={this.state.modalC} centered={true} >
             <ModalHeader >
-                {selectedValueDetail.Name} Contact Detail
+             {selectedValueDetail.first_name} Contact Detail
             </ModalHeader>
             <ModalBody>
                 <div className="contactDiv">
                     <h3>{selectedValueDetail.first_name} {selectedValueDetail.last_name}</h3>
                     <h6>mobile Number : {selectedValueDetail.phone_number}</h6>
-                    <p>Address : {selectedValueDetail.Address}</p>
+                    <p>ID : {selectedValueDetail.id}</p>
                 </div>
                
             </ModalBody>
@@ -391,5 +409,19 @@ class Home extends Component{
   }
 }
 
+const mapStateToProps = state => {
+  return {
+    AllContactValue: state.CONTACT,
+    // AllUSContactValue: state.USCONTACT,
 
-export default Home;
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({
+      ContactAll,
+      contactUSAll
+  }, dispatch)
+};
+
+export default connect (mapStateToProps, mapDispatchToProps) (Home);
