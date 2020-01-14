@@ -13,18 +13,16 @@ import { CONTACT ,USCONTACT } from '../reducer/reducer';
 export const ContactAll = (searchValue,page) => {
     return dispatch => {
         contactAllService(searchValue,page).then((res) => {
-            // console.log(res);
-            // console.log(userData.data.result_status);
-            // if(userData.data.result_status=== 'success'){
-            //     }else{
-            //     alert('invalid crendential')
-            // }
-            dispatch({type: CONTACT, payload: res.data.contacts});
+            if(res.status=== 200){
+                dispatch({type: CONTACT, payload: res.data.contacts});
+            }else{
+                alert('API is not Working')
+            }
+            
         }).catch((err) => {
             throw(err);
             
         });
-        console.log("CONTACT is running")
 
     };
 
@@ -33,18 +31,28 @@ export const ContactAll = (searchValue,page) => {
 export const contactUSAll = (searchValue,page) => {
     return dispatch => {
         contactUSAllService(searchValue,page).then((res) => {
-            // console.log(res);
-            // console.log(userData.data.result_status);
-            // if(userData.data.result_status=== 'success'){
-            //     }else{
-            //     alert('invalid crendential')
-            // }
-            dispatch({type: USCONTACT, payload: res.data.contacts});
+            if(res.status=== 200){
+                dispatch({type: USCONTACT, payload: res.data.contacts});
+            }else{
+                alert('API is not Working')
+            }
+           
         }).catch((err) => {
             throw(err);
             
         });
-        console.log("contactUSAllService is running")
+
+    };
+
+};
+
+export const resetData = () => {
+    return dispatch => {
+     
+            dispatch({type: CONTACT, payload: []});
+            dispatch({type: USCONTACT, payload: []});
+
+       
 
     };
 

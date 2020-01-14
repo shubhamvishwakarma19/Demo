@@ -4,7 +4,7 @@ import './Home.css';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {ContactAll , contactUSAll} from '../action/action';
+import {ContactAll , contactUSAll,resetData} from '../action/action';
 
 
 const style = {
@@ -92,28 +92,27 @@ class Home extends Component{
     this.setState({
       modalA:!this.state.modalA,
       modalB:false,
-      loadingForAll:false
+      loadingForAll:false,
+      allContactData:[],
     })
-    let searchValue = "";
-    let page = 1;
-    this.props.ContactAll(searchValue,page);
+    this.props.ContactAll(this.state.searchTextValueAll,this.state.currentPageAll);
     
     this.props.history.push('/allContact')
    
   };
 
   closeModalA(){
-
+    this.props.resetData();
     this.setState({
       modalA:!this.state.modalA,
       modalB:false,
       loadingForAll:false,
       loadingForUS:false,
       allContactData:[],
+      currentPageAll:1,
       searchTextValueAll:'',
 
 
-    },()=>{console.log(this.state.allContactData);
     })
     this.props.history.push('/')
   };
@@ -126,24 +125,21 @@ class Home extends Component{
       loadingForUS:false,
       
     })
-    let searchValue = "";
-    let page = 1;
-    this.props.contactUSAll(searchValue,page);
+    this.props.contactUSAll(this.state.searchTextValueUS,this.state.currentPageUs);
     this.props.history.push('/USContact')
 
   };
 
   closeModalB(){
+    this.props.resetData();
     this.setState({
       modalB:!this.state.modalB,
       modalA:false,
       loadingForAll:false,
       loadingForUS:false,
       USContactData:[],
-      searchTextValueUS:''
-
-
-  
+      searchTextValueUS:'',
+      currentPageUs:1,
     })
     this.props.history.push('/')
   
@@ -166,6 +162,7 @@ class Home extends Component{
   };
 
   closeModalC(){
+    this.props.resetData();
     this.setState({
         modalC:!this.state.modalC,
         modalA:false,
@@ -223,11 +220,11 @@ class Home extends Component{
 
   onlyOddForUSContant=() =>{
     var checkBox2 = document.getElementById("myCheck2");
-    let AllData = this.state.USContactData;
+    let AllData2 = this.state.USContactData;
         
         if (checkBox2.checked === true){
             let oddData = [];
-            for(let item of AllData){
+            for(let item of AllData2){
                 if(item.id % 2 === 0){
                     oddData.push(item)
                 }
@@ -236,7 +233,7 @@ class Home extends Component{
               USContactData:oddData
             })
           } else {
-            let map = this.props.AllContactValue.AllContactFromAPI;
+            let map = this.props.AllContactValue.USAllContactFromAPI;
             const result = Object.keys(map).map((key) => map[key]);
             this.setState({
               USContactData : result
@@ -412,7 +409,6 @@ class Home extends Component{
 const mapStateToProps = state => {
   return {
     AllContactValue: state.CONTACT,
-    // AllUSContactValue: state.USCONTACT,
 
   };
 };
@@ -420,7 +416,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
       ContactAll,
-      contactUSAll
+      contactUSAll,
+      resetData
   }, dispatch)
 };
 
