@@ -1,59 +1,89 @@
 
-import { contactAllService, contactUSAllService} from '../authservice';
-// import {LOGIN} from "./../reducers/auth";
-
-// import { ENABLE_LOADING} from "../reducers/loading";
-// import { GETLIST } from './../reducers/list';
-// import { HOMECONTENT,SETTINGCONTENT } from './../reducers/homecontent';
-// import { GETSERVICEDATA,GETSUBSCRIPTIONDATA,GETGALLERYDATA,UPLOADIMAGEDATA } from './../reducers/servicedata';
-import { CONTACT ,USCONTACT } from '../reducer/reducer';
+import { employeListService, addNewEmploye,updateEmploye,deleteEmploye} from '../authservice';
+import { EMPLOYE } from '../reducer/reducer';
 
 
 
-export const ContactAll = (searchValue,page) => {
+export const getEmployeList = () => {
     return dispatch => {
-        contactAllService(searchValue,page).then((res) => {
-            if(res.status=== 200){
-                dispatch({type: CONTACT, payload: res.data.contacts});
-            }else{
-                alert('API is not Working')
+        employeListService().then((res) => {
+            if(res && res.data &&res.data.status && res.data.status==="success" ){
+                dispatch({type: EMPLOYE, payload: res.data.data});
             }
-            
         }).catch((err) => {
-            throw(err);
-            
+            console.log(err);
         });
-
     };
 
 };
 
-export const contactUSAll = (searchValue,page) => {
+export const addNewEmployes = (payload) => {
     return dispatch => {
-        contactUSAllService(searchValue,page).then((res) => {
-            if(res.status=== 200){
-                dispatch({type: USCONTACT, payload: res.data.contacts});
+        addNewEmploye(payload).then((res) => {
+            if(res && res.data &&res.data.status && res.data.status==="success" ){
+                dispatch({type: EMPLOYE, payload: res.data.data});
+                dispatch( getEmployeList());
+                
             }else{
-                alert('API is not Working')
+                alert("Something went to wrong");
             }
            
         }).catch((err) => {
-            throw(err);
+            console.log(err);
             
         });
 
     };
 
 };
+export const updateEmployes = (payload,id) => {
+    return dispatch => {
+        updateEmploye(payload,id).then((res) => {
+            if(res && res.data &&res.data.status && res.data.status==="success" ){
+                dispatch({type: EMPLOYE, payload: res.data.data});
+                alert("Update Successfully")
+
+                dispatch( getEmployeList());
+                
+            }else{
+                alert("Something went to wrong");
+            }
+           
+        }).catch((err) => {
+            console.log(err);
+            
+        });
+
+    };
+
+};
+
+export const deleteEmployes = (id) => {
+    return dispatch => {
+        deleteEmploye(id).then((res) => {
+            if(res && res.data &&res.data.status && res.data.status==="success" ){
+                dispatch({type: EMPLOYE, payload: res.data.data});
+                alert("deleted Successfully")
+                dispatch( getEmployeList());
+                
+            }else{
+                alert("Something went to wrong");
+            }
+           
+        }).catch((err) => {
+            console.log(err);
+            
+        });
+
+    };
+
+};
+
 
 export const resetData = () => {
     return dispatch => {
      
-            dispatch({type: CONTACT, payload: []});
-            dispatch({type: USCONTACT, payload: []});
-
-       
-
+            dispatch({type: EMPLOYE, payload: []});
     };
 
 };

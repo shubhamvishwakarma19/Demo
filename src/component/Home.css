@@ -3,30 +3,55 @@
     border-color: #46139f !important;
     color: #fff;
   }
-  .modalBButtonColor{
+  .submitButton{
     background:#ff7f50 !important;
     border-color: #ff7f50 !important;
     color: #fff;
+    margin-top: 20px;
+  }
+  .deleteButton{
+    background: #FF0000 !important;
+    color: #fff;
+    margin-left: 10px;
+    border: none !important;
   }
   .modalCButtonColor{
     background:#fff !important;
     border-color: #46139f !important;
     color: #46139f !important;
   }
-  .contactDiv{
-    background: #80808040 !important;
+  .ListContianer{
     margin: 5px !important;
     padding: 10px !important;
+    display: inline-flex;
+    justify-content: space-between;
+    text-align: left;
   }
-  .scroll{
-    height: 200px;
-    overflow: auto;
+  .ListContianer .boxDiv{
+    width: 200px;
+    text-align:left;
   }
-  .searchInput{
-    width: 100% !important;
-    padding: 5px !important;
+  .profileImg{
+    width: 50px;
+    height: 50px;
   }
-  .padd10{
-    padding:10px !important;
+  .fieldlabel{
+    font-size: 16px;
+    margin: 0px;
   }
+  .errorMsg{
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    color: #FF0000;
+  }
+  .employeListtitle{
+    padding-left: 50px;
+    font-weight: bold;
+    font-size: 20px;
+    color: #46139f ;
+    margin-top: 30px;
+  }
+  
+  
   

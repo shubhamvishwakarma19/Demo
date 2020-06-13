@@ -10,9 +10,7 @@ class Routes extends React.Component {
       return (
         <Router >
            <Route path = "/" component = {Home} />
-           <Route path = "/allContact" />
-           <Route path = "/USContact" />
-     </Router>
+        </Router>
       );
    }
 }
